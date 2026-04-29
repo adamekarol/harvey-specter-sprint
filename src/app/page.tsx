@@ -614,7 +614,7 @@ export default async function Home() {
           style={{ marginTop: "120px", gridTemplateColumns: "16px 1fr 20%", columnGap: "8px" }}
         >
           <p
-            className="font-mono text-white text-[10px] uppercase leading-[1.1] self-end pb-8"
+            className="font-mono text-white text-[10px] uppercase leading-[1.1] self-center"
             style={{ writingMode: "vertical-rl", transform: "rotate(180deg)" }}
           >
             [ Coded By Claude ]
