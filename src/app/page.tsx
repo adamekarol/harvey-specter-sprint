@@ -2,7 +2,7 @@ import { Nav } from "./components/Nav";
 import { TestimonialsSection } from "./components/TestimonialsSection";
 import { client } from "@/sanity/lib/client";
 import { urlFor } from "@/sanity/lib/image";
-import { portfolioQuery } from "@/sanity/lib/queries";
+import { portfolioQuery, type PortfolioItem } from "@/sanity/lib/queries";
 
 const HERO_IMAGE =
   "https://www.figma.com/api/mcp/asset/a38d0ce5-78f9-473a-b9f7-f4b2bfc82223";
@@ -25,17 +25,6 @@ const NEWS_ITEMS = [
   { img: "https://www.figma.com/api/mcp/asset/e767195b-0d01-4c0f-a5e5-b2d6630eda58", text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua." },
   { img: "https://www.figma.com/api/mcp/asset/9c2a05a4-28df-4e9d-84fa-a49a3f86a291", text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua." },
 ];
-
-type PortfolioItem = {
-  _id: string;
-  title: string;
-  slug: { current: string } | null;
-  tags: string[] | null;
-  image: { asset: { _ref: string } } | null;
-  externalImageUrl: string | null;
-  link: string | null;
-  order: number | null;
-};
 
 function resolveImage(item: PortfolioItem): string {
   if (item.image?.asset) return urlFor(item.image).url();
