@@ -1,11 +1,8 @@
-"use client";
-
-import { useState } from "react";
-import Link from "next/link";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Pagination } from "swiper/modules";
-import "swiper/css";
-import "swiper/css/pagination";
+import { Nav } from "./components/Nav";
+import { TestimonialsSection } from "./components/TestimonialsSection";
+import { client } from "@/sanity/lib/client";
+import { urlFor } from "@/sanity/lib/image";
+import { portfolioQuery, type PortfolioItem } from "@/sanity/lib/queries";
 
 const HERO_IMAGE =
   "https://www.figma.com/api/mcp/asset/a38d0ce5-78f9-473a-b9f7-f4b2bfc82223";
@@ -23,68 +20,22 @@ const SERVICES = [
   { num: "[ 4 ]", title: "Photography",      img: "https://www.figma.com/api/mcp/asset/aa417492-69cd-4e86-a1b0-c3c1f5843d23" },
 ] as const;
 
-// em values below are relative to the h2 font-size (13.75vw = 1em on desktop).
-// Dividing each Figma px value by 198 (13.75vw at 1440px) gives the em equivalent,
-// so every position and card dimension stays locked to the h2 as the viewport changes.
-const TESTIMONIALS = [
-  {
-    logo: "https://www.figma.com/api/mcp/asset/cd9fc73e-b761-430b-a053-0da1aa830a49",
-    quote: "A brilliant creative partner who transformed our vision into a unique, high-impact brand identity. Their ability to craft everything from custom mascots to polished logos is truly impressive.",
-    name: "Marko Stojković",
-    logoW: 143, logoH: 19,
-    desktop: { top: "9.86vw", left: "7.08%", rotate: "-6.85deg", z: 0 },
-    mobileRotate: "-2deg",
-  },
-  {
-    logo: "https://www.figma.com/api/mcp/asset/2b4aac27-4629-413a-9f79-d22ca0f2d21b",
-    quote: "Professional, precise, and incredibly fast at handling complex product visualizations and templates.",
-    name: "Lukas Weber",
-    logoW: 138, logoH: 19,
-    desktop: { top: "18.89vw", left: "46.94%", rotate: "2.9deg", z: 0 },
-    mobileRotate: "2deg",
-  },
-  {
-    logo: "https://www.figma.com/api/mcp/asset/28dd5f44-aa4b-4544-81fc-13751743e40e",
-    quote: "A strategic partner who balances stunning aesthetics with high-performance UX for complex platforms. They don't just make things look good; they solve business problems through visual clarity.",
-    name: "Sarah Jenkins",
-    logoW: 109, logoH: 31,
-    desktop: { top: "38.40vw", left: "21.18%", rotate: "2.23deg", z: 20 },
-    mobileRotate: "-1.5deg",
-  },
-  {
-    logo: "https://www.figma.com/api/mcp/asset/510bf496-b278-48bd-af59-5b7a559650d7",
-    quote: "An incredibly versatile designer who delivers consistent quality across a wide range of styles and formats.",
-    name: "Sofia Martínez",
-    logoW: 81, logoH: 36,
-    desktop: { top: "37.92vw", left: "68.54%", rotate: "-4.15deg", z: 20 },
-    mobileRotate: "1.5deg",
-  },
-];
-
 const NEWS_ITEMS = [
   { img: "https://www.figma.com/api/mcp/asset/8be4e21f-629a-4cd3-8640-bdf02175314f", text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua." },
   { img: "https://www.figma.com/api/mcp/asset/e767195b-0d01-4c0f-a5e5-b2d6630eda58", text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua." },
   { img: "https://www.figma.com/api/mcp/asset/9c2a05a4-28df-4e9d-84fa-a49a3f86a291", text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua." },
 ];
 
-const WORK_IMGS = [
-  "https://www.figma.com/api/mcp/asset/be55c0df-0a87-42ba-a8d1-29a166256afc", // Surfers Paradise
-  "https://www.figma.com/api/mcp/asset/62c21eba-7725-434f-8703-332ba076c5df", // Cyberpunk Caffe
-  "https://www.figma.com/api/mcp/asset/f62f152b-d4c9-489c-914c-6fbe39dc862d", // Agency 976
-  "https://www.figma.com/api/mcp/asset/2fdd0882-d626-4609-bcdd-133bcc43bfcc", // Minimal Playground
-];
+function resolveImage(item: PortfolioItem): string {
+  if (item.image?.asset) return urlFor(item.image).url();
+  return item.externalImageUrl ?? "";
+}
 
-const WORK_PROJECTS = [
-  { title: "Surfers Paradise",   tags: ["Social Media", "Photography"], img: WORK_IMGS[0], desktopH: "h-[744px]" },
-  { title: "Cyberpunk Caffe",    tags: ["Social Media", "Photography"], img: WORK_IMGS[1], desktopH: "h-[699px]" },
-  { title: "Agency 976",         tags: ["Social Media", "Photography"], img: WORK_IMGS[2], desktopH: "h-[699px]" },
-  { title: "Minimal Playground", tags: ["Social Media", "Photography"], img: WORK_IMGS[3], desktopH: "h-[744px]" },
-] as const;
+// Heights for the staggered desktop 2-col grid: outer index maps to position
+const DESKTOP_HEIGHTS = ["h-[744px]", "h-[699px]", "h-[699px]", "h-[744px]"];
 
-const NAV_LINKS = ["About", "Services", "Projects", "News", "Contact"];
-
-export default function Home() {
-  const [menuOpen, setMenuOpen] = useState(false);
+export default async function Home() {
+  const portfolioItems: PortfolioItem[] = await client.fetch(portfolioQuery, {}, { next: { revalidate: 60 } });
 
   return (
     <main>
@@ -96,12 +47,6 @@ export default function Home() {
           className="absolute inset-0 w-full h-full object-cover object-[center_20%]"
         />
 
-        {/*
-         * Blur fades OUT from bottom to top:
-         * - bottom of viewport → full blur
-         * - fades to transparent going upward
-         * mask: to top → black (opaque) at bottom, transparent at top
-         */}
         <div
           className="absolute bottom-0 inset-x-0 h-[50%] min-[900px]:h-[40%] pointer-events-none"
           style={{
@@ -113,79 +58,13 @@ export default function Home() {
           }}
         />
 
-        {/* Full-height flex column — nav pinned top, hero at bottom */}
         <div className="relative flex flex-col min-h-dvh px-4 min-[900px]:px-8">
-          {/* ── Navbar ── */}
-          <nav className="flex items-center justify-between py-6 z-10">
-            <Link
-              href="/"
-              className="text-base font-semibold tracking-[-0.04em] text-black capitalize"
-            >
-              H.Studio
-            </Link>
+          <Nav />
 
-            {/* Desktop links — visible at 900px+ */}
-            <div className="hidden min-[900px]:flex gap-14 text-base font-semibold tracking-[-0.04em] text-black capitalize">
-              {NAV_LINKS.map((link) => (
-                <a
-                  key={link}
-                  href="#"
-                  className="hover:opacity-60 transition-opacity"
-                >
-                  {link}
-                </a>
-              ))}
-            </div>
-
-            {/* Desktop CTA — visible at 900px+ */}
-            <a
-              href="#"
-              className="hidden min-[900px]:flex items-center bg-black text-white text-sm font-medium px-4 py-3 rounded-full tracking-[-0.035em]"
-            >
-              Let&apos;s talk
-            </a>
-
-            {/* Hamburger — visible below 900px */}
-            <button
-              className="min-[900px]:hidden p-1"
-              onClick={() => setMenuOpen(!menuOpen)}
-              aria-label="Toggle menu"
-            >
-              <svg width="24" height="16" viewBox="0 0 24 16" fill="none">
-                <rect width="24" height="2" rx="1" fill="black" />
-                <rect y="7" width="24" height="2" rx="1" fill="black" />
-                <rect y="14" width="24" height="2" rx="1" fill="black" />
-              </svg>
-            </button>
-          </nav>
-
-          {/* Mobile dropdown */}
-          {menuOpen && (
-            <div className="min-[900px]:hidden absolute top-[72px] inset-x-0 bg-white/90 backdrop-blur-md px-4 py-6 z-20 flex flex-col gap-4">
-              {NAV_LINKS.map((link) => (
-                <a
-                  key={link}
-                  href="#"
-                  className="text-base font-semibold text-black tracking-[-0.04em]"
-                >
-                  {link}
-                </a>
-              ))}
-              <a
-                href="#"
-                className="self-start mt-2 bg-black text-white text-sm font-medium px-4 py-3 rounded-full"
-              >
-                Let&apos;s talk
-              </a>
-            </div>
-          )}
-
-          {/* Spacer pushes hero content to the bottom */}
           <div className="flex-1" />
 
           {/* ── Hero content ── */}
           <div className="pb-10 min-[900px]:pb-14 flex flex-col gap-[40px]">
-            {/* Label + h1 */}
             <div>
               <p
                 className="text-white text-sm uppercase mix-blend-overlay min-[900px]:px-[18px]"
@@ -198,10 +77,6 @@ export default function Home() {
                 [ Hello i&apos;m ]
               </p>
 
-              {/*
-               * Mobile (<900px): 25vw, wraps to two lines naturally
-               * Desktop (≥900px): 13.75vw, forced onto one line
-               */}
               <h1
                 className="text-white font-medium capitalize text-center mix-blend-overlay
                            text-[25vw]
@@ -212,7 +87,6 @@ export default function Home() {
               </h1>
             </div>
 
-            {/* Description — right-aligned on desktop, stacked on mobile */}
             <div className="min-[900px]:flex min-[900px]:justify-end">
               <div className="min-[900px]:w-[294px] flex flex-col gap-[17px]">
                 <p
@@ -241,7 +115,6 @@ export default function Home() {
 
       {/* ── Tagline section ── */}
       <section className="bg-white px-4 min-[900px]:px-8 py-12 min-[900px]:py-[120px]">
-        {/* Label + rule */}
         <div className="flex flex-col items-end gap-3 mb-6 min-[900px]:mb-6">
           <p
             className="text-[#1f1f1f] text-[13px] uppercase leading-[1.1] tracking-[0.03em]"
@@ -252,10 +125,7 @@ export default function Home() {
           <div className="w-full h-px bg-[#1f1f1f] opacity-25" />
         </div>
 
-        {/* Staggered big text */}
         <div className="flex flex-col gap-2 min-[900px]:gap-[8px]">
-
-          {/* "001" — shown above on mobile, inline on desktop */}
           <p
             className="min-[900px]:hidden text-center text-[#1f1f1f] text-[13px] leading-[1.1] tracking-[0.03em]"
             style={{ fontFamily: "monospace" }}
@@ -263,7 +133,6 @@ export default function Home() {
             001
           </p>
 
-          {/* Line 1: A creative director / + inline 001 on desktop */}
           <div className="flex items-start gap-3 justify-center min-[900px]:justify-start">
             <span
               className="font-light text-black uppercase whitespace-nowrap
@@ -280,7 +149,6 @@ export default function Home() {
             </span>
           </div>
 
-          {/* Line 2: Photographer */}
           <div className="text-center min-[900px]:text-left min-[900px]:pl-[15.55%]">
             <span
               className="font-light text-black uppercase whitespace-nowrap
@@ -291,7 +159,6 @@ export default function Home() {
             </span>
           </div>
 
-          {/* Line 3: Born & raised — & in Playfair Italic */}
           <div className="text-center min-[900px]:text-left min-[900px]:pl-[44.33%]">
             <span
               className="font-light text-black uppercase whitespace-nowrap
@@ -314,7 +181,6 @@ export default function Home() {
             </span>
           </div>
 
-          {/* Line 4: on the south side */}
           <div className="text-center min-[900px]:text-left">
             <span
               className="font-light text-black uppercase whitespace-nowrap
@@ -325,7 +191,6 @@ export default function Home() {
             </span>
           </div>
 
-          {/* Line 5 — mobile: "of chicago." centered */}
           <div className="text-center min-[900px]:hidden">
             <span
               className="font-light text-black uppercase whitespace-nowrap text-[8.5vw]"
@@ -335,11 +200,6 @@ export default function Home() {
             </span>
           </div>
 
-          {/*
-           * Line 5 — desktop: relative container, full width.
-           * "of chicago." at 44% left, label at 78.4% left (matching Figma x positions).
-           * Container height = font-size × line-height = 6.67vw × 0.84 = 5.6vw.
-           */}
           <div className="hidden min-[900px]:block">
             <div style={{ paddingLeft: "44%" }}>
               <span
@@ -357,7 +217,6 @@ export default function Home() {
             </p>
           </div>
 
-          {/* "[ CREATIVE FREELANCER ]" — mobile only, below "of chicago." */}
           <p
             className="min-[900px]:hidden text-center text-[#1f1f1f] text-[13px] leading-[1.1] tracking-[0.03em] mt-1"
             style={{ fontFamily: "monospace" }}
@@ -366,6 +225,7 @@ export default function Home() {
           </p>
         </div>
       </section>
+
       {/* ── About section ── */}
       <section className="bg-white px-4 min-[900px]:px-8 py-12 min-[900px]:py-[80px]">
 
@@ -374,7 +234,6 @@ export default function Home() {
           <p className="text-[#1f1f1f] text-[13px] uppercase leading-[1.1]" style={{ fontFamily: "monospace" }}>002</p>
           <p className="text-[#1f1f1f] text-[13px] uppercase leading-[1.1]" style={{ fontFamily: "monospace" }}>[ About ]</p>
 
-          {/* Bracketed text */}
           <div className="flex items-stretch gap-4">
             <div className="flex flex-col justify-between shrink-0">
               <div className="w-4 h-4 border-l border-t border-[#1f1f1f]" />
@@ -389,7 +248,6 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Portrait */}
           <div className="w-full overflow-hidden" style={{ aspectRatio: "436/614" }}>
             <img src={ABOUT_IMAGE} alt="" className="w-full h-full object-cover" />
           </div>
@@ -399,10 +257,7 @@ export default function Home() {
         <div className="hidden min-[900px]:flex justify-between items-start">
           <p className="text-[#1f1f1f] text-[13px] uppercase leading-[1.1] whitespace-nowrap shrink-0" style={{ fontFamily: "monospace" }}>[ About ]</p>
 
-          {/* Right block: text + 002 + image */}
           <div className="w-[71%] flex gap-8 items-end">
-
-            {/* Bracketed text */}
             <div className="flex flex-1 items-stretch gap-4">
               <div className="flex flex-col justify-between shrink-0">
                 <div className="w-4 h-4 border-l border-t border-[#1f1f1f]" />
@@ -417,7 +272,6 @@ export default function Home() {
               </div>
             </div>
 
-            {/* 002 + portrait */}
             <div className="flex gap-6 items-start shrink-0">
               <p className="text-[#1f1f1f] text-[13px] uppercase leading-[1.1]" style={{ fontFamily: "monospace" }}>002</p>
               <div className="w-[30vw] overflow-hidden" style={{ aspectRatio: "436/614" }}>
@@ -440,10 +294,8 @@ export default function Home() {
       {/* ── Services ── */}
       <section className="bg-black px-4 min-[900px]:px-8 py-12 min-[900px]:py-[80px] flex flex-col gap-8 min-[900px]:gap-12">
 
-        {/* [ services ] label */}
         <p className="text-white text-[13px] uppercase leading-[1.1] whitespace-nowrap" style={{ fontFamily: "monospace" }}>[ services ]</p>
 
-        {/* [4] Deliverables */}
         <div className="flex items-center justify-between w-full uppercase whitespace-nowrap">
           <span className="font-light text-white leading-none" style={{ fontSize: "8.5vw", letterSpacing: "-0.08em", lineHeight: 1 }}>
             [4]
@@ -453,18 +305,14 @@ export default function Home() {
           </span>
         </div>
 
-        {/* Service rows */}
         <div className="flex flex-col gap-12">
           {SERVICES.map((s) => (
             <div key={s.title} className="flex flex-col gap-[9px]">
-
-              {/* Number + rule */}
               <div className="flex flex-col gap-[9px]">
                 <p className="text-white text-[13px] uppercase leading-[1.1]" style={{ fontFamily: "monospace" }}>{s.num}</p>
                 <div className="w-full h-px bg-white opacity-20" />
               </div>
 
-              {/* Content: desktop = title left / desc+img right; mobile = stacked */}
               <div className="flex flex-col gap-4 min-[900px]:flex-row min-[900px]:items-start min-[900px]:justify-between pt-[9px]">
                 <p className="font-bold italic text-white uppercase leading-[1.1] tracking-[-0.04em] whitespace-nowrap text-[28px] min-[900px]:text-[36px] shrink-0">
                   {s.title}
@@ -478,7 +326,6 @@ export default function Home() {
                   </div>
                 </div>
               </div>
-
             </div>
           ))}
         </div>
@@ -513,12 +360,12 @@ export default function Home() {
 
         {/* Mobile: single column */}
         <div className="min-[900px]:hidden flex flex-col gap-6">
-          {WORK_PROJECTS.map((p) => (
-            <div key={p.title} className="flex flex-col gap-[10px]">
+          {portfolioItems.map((p) => (
+            <div key={p._id} className="flex flex-col gap-[10px]">
               <div className="relative h-[390px] overflow-hidden">
-                <img src={p.img} alt={p.title} className="absolute inset-0 w-full h-full object-cover" />
+                <img src={resolveImage(p)} alt={p.title} className="absolute inset-0 w-full h-full object-cover" />
                 <div className="absolute bottom-4 left-4 flex gap-3">
-                  {p.tags.map((tag) => (
+                  {(p.tags ?? []).map((tag) => (
                     <span key={tag} className="backdrop-blur-[10px] bg-white/30 px-2 py-1 rounded-full text-[14px] font-medium text-[#111] tracking-[-0.04em] whitespace-nowrap">{tag}</span>
                   ))}
                 </div>
@@ -552,37 +399,24 @@ export default function Home() {
         {/* Desktop: 2-col staggered grid */}
         <div className="hidden min-[900px]:flex gap-6 items-stretch">
 
-          {/* Left column */}
+          {/* Left column: items 0 and 1 */}
           <div className="flex-1 flex flex-col gap-6">
-            {/* Surfers Paradise */}
-            <div className="flex flex-col gap-[10px]">
-              <div className="relative h-[744px] overflow-hidden">
-                <img src={WORK_PROJECTS[0].img} alt="Surfers Paradise" className="absolute inset-0 w-full h-full object-cover" />
-                <div className="absolute bottom-4 left-4 flex gap-3">
-                  <span className="backdrop-blur-[10px] bg-white/30 px-2 py-1 rounded-full text-[14px] font-medium text-[#111] tracking-[-0.04em] whitespace-nowrap">Social Media</span>
-                  <span className="backdrop-blur-[10px] bg-white/30 px-2 py-1 rounded-full text-[14px] font-medium text-[#111] tracking-[-0.04em] whitespace-nowrap">Photography</span>
+            {portfolioItems.slice(0, 2).map((p, i) => (
+              <div key={p._id} className="flex flex-col gap-[10px]">
+                <div className={`relative ${DESKTOP_HEIGHTS[i]} overflow-hidden`}>
+                  <img src={resolveImage(p)} alt={p.title} className="absolute inset-0 w-full h-full object-cover" />
+                  <div className="absolute bottom-4 left-4 flex gap-3">
+                    {(p.tags ?? []).map((tag) => (
+                      <span key={tag} className="backdrop-blur-[10px] bg-white/30 px-2 py-1 rounded-full text-[14px] font-medium text-[#111] tracking-[-0.04em] whitespace-nowrap">{tag}</span>
+                    ))}
+                  </div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <p className="font-black text-[36px] text-black uppercase leading-[1.1] tracking-[-0.04em] whitespace-nowrap">{p.title}</p>
+                  <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><path d="M10 22L22 10M22 10H14M22 10V18" stroke="black" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
                 </div>
               </div>
-              <div className="flex items-center justify-between">
-                <p className="font-black text-[36px] text-black uppercase leading-[1.1] tracking-[-0.04em] whitespace-nowrap">Surfers Paradise</p>
-                <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><path d="M10 22L22 10M22 10H14M22 10V18" stroke="black" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-              </div>
-            </div>
-
-            {/* Cyberpunk Caffe */}
-            <div className="flex flex-col gap-[10px]">
-              <div className="relative h-[699px] overflow-hidden">
-                <img src={WORK_PROJECTS[1].img} alt="Cyberpunk Caffe" className="absolute inset-0 w-full h-full object-cover" />
-                <div className="absolute bottom-4 left-4 flex gap-3">
-                  <span className="backdrop-blur-[10px] bg-white/30 px-2 py-1 rounded-full text-[14px] font-medium text-[#111] tracking-[-0.04em] whitespace-nowrap">Social Media</span>
-                  <span className="backdrop-blur-[10px] bg-white/30 px-2 py-1 rounded-full text-[14px] font-medium text-[#111] tracking-[-0.04em] whitespace-nowrap">Photography</span>
-                </div>
-              </div>
-              <div className="flex items-center justify-between">
-                <p className="font-black text-[36px] text-black uppercase leading-[1.1] tracking-[-0.04em] whitespace-nowrap">Cyberpunk Caffe</p>
-                <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><path d="M10 22L22 10M22 10H14M22 10V18" stroke="black" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-              </div>
-            </div>
+            ))}
 
             {/* Desktop CTA bracket */}
             <div className="mt-auto w-full max-w-[465px] flex items-stretch gap-4">
@@ -603,129 +437,30 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Right column — offset down */}
+          {/* Right column: items 2 and 3, offset down */}
           <div className="flex-1 flex flex-col gap-6 pt-[240px]">
-            {/* Agency 976 */}
-            <div className="flex flex-col gap-[10px]">
-              <div className="relative h-[699px] overflow-hidden">
-                <img src={WORK_PROJECTS[2].img} alt="Agency 976" className="absolute inset-0 w-full h-full object-cover" />
-                <div className="absolute bottom-4 left-4 flex gap-3">
-                  <span className="backdrop-blur-[10px] bg-white/30 px-2 py-1 rounded-full text-[14px] font-medium text-[#111] tracking-[-0.04em] whitespace-nowrap">Social Media</span>
-                  <span className="backdrop-blur-[10px] bg-white/30 px-2 py-1 rounded-full text-[14px] font-medium text-[#111] tracking-[-0.04em] whitespace-nowrap">Photography</span>
-                </div>
-              </div>
-              <div className="flex items-center justify-between">
-                <p className="font-black text-[36px] text-black uppercase leading-[1.1] tracking-[-0.04em] whitespace-nowrap">Agency 976</p>
-                <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><path d="M10 22L22 10M22 10H14M22 10V18" stroke="black" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-              </div>
-            </div>
-
-            {/* Minimal Playground */}
-            <div className="flex flex-col gap-[10px]">
-              <div className="relative h-[744px] overflow-hidden">
-                <img src={WORK_PROJECTS[3].img} alt="Minimal Playground" className="absolute inset-0 w-full h-full object-cover" />
-                <div className="absolute bottom-4 left-4 flex gap-3">
-                  <span className="backdrop-blur-[10px] bg-white/30 px-2 py-1 rounded-full text-[14px] font-medium text-[#111] tracking-[-0.04em] whitespace-nowrap">Social Media</span>
-                  <span className="backdrop-blur-[10px] bg-white/30 px-2 py-1 rounded-full text-[14px] font-medium text-[#111] tracking-[-0.04em] whitespace-nowrap">Photography</span>
-                </div>
-              </div>
-              <div className="flex items-center justify-between">
-                <p className="font-black text-[36px] text-black uppercase leading-[1.1] tracking-[-0.04em] whitespace-nowrap">Minimal Playground</p>
-                <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><path d="M10 22L22 10M22 10H14M22 10V18" stroke="black" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-              </div>
-            </div>
-          </div>
-
-        </div>
-      </section>
-
-      {/* ── Testimonials ── */}
-      <section className="bg-white overflow-hidden">
-
-        {/* Mobile — Swiper carousel */}
-        <div className="min-[900px]:hidden py-16">
-          <h2
-            className="font-medium text-black px-4 mb-8"
-            style={{ fontSize: "17vw", letterSpacing: "-0.07em", lineHeight: 0.8 }}
-          >
-            Testimonials
-          </h2>
-          <Swiper
-            modules={[Pagination]}
-            pagination={{ clickable: true }}
-            spaceBetween={-2}
-            slidesPerView="auto"
-            centeredSlides
-            className="testimonials-swiper !pb-10"
-          >
-            {TESTIMONIALS.map((t) => (
-              <SwiperSlide key={t.name} className="!h-auto" style={{ width: "min(85vw, 500px)" }}>
-                <div className="py-2" style={{ transform: `rotate(${t.mobileRotate})` }}>
-                  <div className="bg-[#f1f1f1] border border-[#ddd] rounded-[4px] flex flex-col gap-4 p-5">
-                    <img src={t.logo} alt="" style={{ width: t.logoW, height: t.logoH, maxWidth: "100%" }} />
-                    <p className="text-[#1f1f1f] text-[16px] leading-[1.3] tracking-[-0.64px]">{t.quote}</p>
-                    <p className="font-black text-black text-[14px] uppercase tracking-[-0.56px] leading-[1.1]">{t.name}</p>
+            {portfolioItems.slice(2, 4).map((p, i) => (
+              <div key={p._id} className="flex flex-col gap-[10px]">
+                <div className={`relative ${DESKTOP_HEIGHTS[i + 2]} overflow-hidden`}>
+                  <img src={resolveImage(p)} alt={p.title} className="absolute inset-0 w-full h-full object-cover" />
+                  <div className="absolute bottom-4 left-4 flex gap-3">
+                    {(p.tags ?? []).map((tag) => (
+                      <span key={tag} className="backdrop-blur-[10px] bg-white/30 px-2 py-1 rounded-full text-[14px] font-medium text-[#111] tracking-[-0.04em] whitespace-nowrap">{tag}</span>
+                    ))}
                   </div>
                 </div>
-              </SwiperSlide>
+                <div className="flex items-center justify-between">
+                  <p className="font-black text-[36px] text-black uppercase leading-[1.1] tracking-[-0.04em] whitespace-nowrap">{p.title}</p>
+                  <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><path d="M10 22L22 10M22 10H14M22 10V18" stroke="black" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                </div>
+              </div>
             ))}
-          </Swiper>
-        </div>
-
-        {/* Desktop — 3-row flex, container width driven by h2 whitespace-nowrap */}
-        <div className="hidden min-[900px]:flex flex-col items-center py-[8.33vw]">
-          <div className="flex flex-col" style={{ width: "fit-content" }}>
-
-            {/* Row 1: Marko + Lukas */}
-            <div className="w-full">
-              <div className="flex justify-between items-end w-full max-w-full min-[1100px]:max-w-[60vw]">
-              <div className="relative shrink-0" style={{ transform: "rotate(-6.85deg)", zIndex: 15 }}>
-                <div className="bg-[#f1f1f1] border border-[#ddd] rounded-[4px] flex flex-col gap-4 p-6" style={{ width: "353px", maxWidth: "440px" }}>
-                  <img src={TESTIMONIALS[0].logo} alt="" style={{ width: TESTIMONIALS[0].logoW, height: TESTIMONIALS[0].logoH, maxWidth: "100%" }} />
-                  <p className="text-[#1f1f1f] text-[18px] leading-[1.3] tracking-[-0.72px]">{TESTIMONIALS[0].quote}</p>
-                  <p className="font-black text-black text-[16px] uppercase tracking-[-0.64px] leading-[1.1]">{TESTIMONIALS[0].name}</p>
-                </div>
-              </div>
-              <div className="relative shrink-0" style={{ transform: "rotate(2.9deg)", zIndex: 0 }}>
-                <div className="bg-[#f1f1f1] border border-[#ddd] rounded-[4px] flex flex-col gap-4 p-6" style={{ width: "353px", maxWidth: "440px" }}>
-                  <img src={TESTIMONIALS[1].logo} alt="" style={{ width: TESTIMONIALS[1].logoW, height: TESTIMONIALS[1].logoH, maxWidth: "100%" }} />
-                  <p className="text-[#1f1f1f] text-[18px] leading-[1.3] tracking-[-0.72px]">{TESTIMONIALS[1].quote}</p>
-                  <p className="font-black text-black text-[16px] uppercase tracking-[-0.64px] leading-[1.1]">{TESTIMONIALS[1].name}</p>
-                </div>
-              </div>
-              </div>
-            </div>
-
-            {/* Row 2: Heading */}
-            <h2
-              className="whitespace-nowrap text-center font-medium text-black relative"
-              style={{ fontSize: "13.75vw", letterSpacing: "-0.07em", lineHeight: 1.1, zIndex: 10, marginTop: "-1.5vw" }}
-            >
-              Testimonials
-            </h2>
-
-            {/* Row 3: Sarah + Sofia — renders above h2 */}
-            <div className="relative flex justify-between items-start ml-auto w-full max-w-full min-[1100px]:max-w-[60vw]" style={{ zIndex: 20, marginTop: "-2vw" }}>
-              <div className="relative shrink-0" style={{ transform: "rotate(2.23deg)" }}>
-                <div className="bg-[#f1f1f1] border border-[#ddd] rounded-[4px] flex flex-col gap-4 p-6" style={{ width: "353px", maxWidth: "440px" }}>
-                  <img src={TESTIMONIALS[2].logo} alt="" style={{ width: TESTIMONIALS[2].logoW, height: TESTIMONIALS[2].logoH, maxWidth: "100%" }} />
-                  <p className="text-[#1f1f1f] text-[18px] leading-[1.3] tracking-[-0.72px]">{TESTIMONIALS[2].quote}</p>
-                  <p className="font-black text-black text-[16px] uppercase tracking-[-0.64px] leading-[1.1]">{TESTIMONIALS[2].name}</p>
-                </div>
-              </div>
-              <div className="relative shrink-0" style={{ transform: "rotate(-4.15deg)" }}>
-                <div className="bg-[#f1f1f1] border border-[#ddd] rounded-[4px] flex flex-col gap-4 p-6" style={{ width: "353px", maxWidth: "440px" }}>
-                  <img src={TESTIMONIALS[3].logo} alt="" style={{ width: TESTIMONIALS[3].logoW, height: TESTIMONIALS[3].logoH, maxWidth: "100%" }} />
-                  <p className="text-[#1f1f1f] text-[18px] leading-[1.3] tracking-[-0.72px]">{TESTIMONIALS[3].quote}</p>
-                  <p className="font-black text-black text-[16px] uppercase tracking-[-0.64px] leading-[1.1]">{TESTIMONIALS[3].name}</p>
-                </div>
-              </div>
-            </div>
-
           </div>
-        </div>
 
+        </div>
       </section>
+
+      <TestimonialsSection />
 
       {/* ── News ── */}
       <section className="bg-[#f3f3f3]">
@@ -757,7 +492,6 @@ export default function Home() {
         {/* Desktop */}
         <div className="hidden min-[900px]:flex items-end px-8 py-[120px] gap-8">
 
-          {/* Heading — rotated -90° in a narrow column */}
           <div
             className="shrink-0 self-stretch flex items-center justify-center"
             style={{ width: "7.64vw" }}
@@ -772,7 +506,6 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Cards row */}
           <div className="flex-1 flex items-start" style={{ gap: "2.15vw" }}>
 
             <div className="flex-1 flex flex-col gap-4">
@@ -788,7 +521,6 @@ export default function Home() {
 
             <div className="w-px self-stretch bg-black/15 shrink-0" />
 
-            {/* Middle card — staggered down */}
             <div className="flex-1 flex flex-col gap-4" style={{ paddingTop: "8.33vw" }}>
               <div className="overflow-hidden" style={{ aspectRatio: "353/469" }}>
                 <img src={NEWS_ITEMS[1].img} alt="" className="w-full h-full object-cover" />
@@ -858,7 +590,6 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Divider */}
         <div className="px-4 min-[900px]:px-8">
           <div className="w-full h-px bg-white/20" />
         </div>
