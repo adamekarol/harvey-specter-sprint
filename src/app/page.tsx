@@ -314,11 +314,11 @@ export default async function Home() {
               </div>
 
               <div className="flex flex-col gap-4 min-[900px]:flex-row min-[900px]:items-start min-[900px]:justify-between pt-[9px]">
-                <p className="font-bold italic text-white uppercase leading-[1.1] tracking-[-0.04em] whitespace-nowrap text-[28px] min-[900px]:text-[36px] shrink-0">
+                <p className="font-bold italic text-white uppercase leading-[1.1] tracking-[-0.04em] text-[28px] min-[900px]:text-[36px] min-[900px]:w-[30%] shrink-0">
                   {s.title}
                 </p>
-                <div className="flex flex-col min-[900px]:flex-row gap-6 items-start shrink-0">
-                  <p className="text-white text-[14px] leading-[1.3] tracking-[-0.04em] min-[900px]:w-[393px]">
+                <div className="flex flex-row flex-wrap justify-between gap-6 items-start">
+                  <p className="text-white text-[14px] leading-[1.3] tracking-[-0.04em] max-w-[400px]">
                     Placeholder description of this service. Explain the value you provide and the outcomes clients can expect. Keep it to two or three sentences.
                   </p>
                   <div className="w-[151px] h-[151px] shrink-0 overflow-hidden">
@@ -609,22 +609,21 @@ export default async function Home() {
         </div>
 
         {/* Desktop bottom */}
-        <div
-          className="hidden min-[900px]:grid items-end px-8"
-          style={{ marginTop: "120px", gridTemplateColumns: "16px 1fr 20%", columnGap: "8px" }}
-        >
-          <p
-            className="font-mono text-white text-[10px] uppercase leading-[1.1] self-center"
-            style={{ writingMode: "vertical-rl", transform: "rotate(180deg)" }}
-          >
-            [ Coded By Claude ]
-          </p>
-          <div>
-            <p className="text-white font-semibold capitalize leading-[0.8]" style={{ fontSize: "20.14vw", letterSpacing: "-1.21vw" }}>
+        <div className="hidden min-[900px]:flex items-end gap-12 px-8 pb-2" style={{ marginTop: "120px" }}>
+          {/* Col 1: Coded By Claude (vertical, left) + H.Studio — sized by content */}
+          <div className="flex items-center gap-4">
+            <p
+              className="font-mono text-white text-[10px] uppercase leading-[1.1] shrink-0"
+              style={{ writingMode: "vertical-rl", transform: "rotate(180deg)" }}
+            >
+              [ Coded By Claude ]
+            </p>
+            <p className="text-white font-semibold capitalize leading-[0.7]" style={{ fontSize: "20.14vw", letterSpacing: "-1.21vw" }}>
               H.Studio
             </p>
           </div>
-          <div className="bg-black flex flex-wrap justify-end gap-x-[34px] gap-y-2 items-end pb-8 text-white text-[12px] tracking-[-0.48px] uppercase">
+          {/* Col 2: Links — fixed % width, wraps internally */}
+          <div className="w-[20%] flex flex-wrap justify-end gap-x-[34px] gap-y-2 text-white text-[12px] tracking-[-0.48px] uppercase">
             <a href="#" className="underline whitespace-nowrap">Licences</a>
             <a href="#" className="underline whitespace-nowrap">Privacy policy</a>
           </div>
