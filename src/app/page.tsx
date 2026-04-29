@@ -313,15 +313,15 @@ export default async function Home() {
                 <div className="w-full h-px bg-white opacity-20" />
               </div>
 
-              <div className="flex flex-col gap-4 min-[900px]:flex-row min-[900px]:items-start min-[900px]:justify-between pt-[9px]">
-                <p className="font-bold italic text-white uppercase leading-[1.1] tracking-[-0.04em] text-[28px] min-[900px]:text-[36px] min-[900px]:w-[30%] shrink-0">
+              <div className="flex flex-col gap-4 min-[900px]:flex-row min-[900px]:items-start min-[900px]:justify-between min-[900px]:gap-x-6 pt-[9px]">
+                <p className="font-bold italic text-white uppercase leading-[1.1] tracking-[-0.04em] text-[28px] min-[900px]:text-[36px] min-[900px]:min-w-[320px]">
                   {s.title}
                 </p>
                 <div className="flex flex-row flex-wrap justify-between gap-6 items-start">
-                  <p className="text-white text-[14px] leading-[1.3] tracking-[-0.04em] max-w-[400px]">
+                  <p className="text-white text-[14px] leading-[1.3] tracking-[-0.04em] min-[900px]:flex-1 max-w-[400px]">
                     Placeholder description of this service. Explain the value you provide and the outcomes clients can expect. Keep it to two or three sentences.
                   </p>
-                  <div className="w-[151px] h-[151px] shrink-0 overflow-hidden">
+                  <div className="w-[151px] h-[151px] shrink-0 overflow-hidden min-[900px]:ml-auto">
                     <img src={s.img} alt={s.title} className="w-full h-full object-cover" />
                   </div>
                 </div>
