@@ -125,6 +125,7 @@ export function NewsSection() {
 
         {/* Right: Swiper extends to right viewport edge, no right padding */}
         <div className="flex-1 min-w-0 flex flex-col gap-6">
+          <p className="pl-0 text-[13px] text-[#1f1f1f] uppercase tracking-[-0.04em]" style={{ fontFamily: "monospace" }}>{'[ <SCROLL> ]'}</p>
           <div className="overflow-x-clip">
           <Swiper
             slidesPerView="auto"
@@ -138,7 +139,6 @@ export function NewsSection() {
             ))}
           </Swiper>
           </div>
-          <p className="pl-0 text-[13px] text-[#1f1f1f] uppercase tracking-[-0.04em]" style={{ fontFamily: "monospace" }}>{'[ <SCROLL> ]'}</p>
         </div>
 
       </div>
