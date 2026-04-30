@@ -7,7 +7,6 @@ export const portfolioQuery = defineQuery(`
     slug,
     tags,
     image,
-    externalImageUrl,
     link,
     order
   }
@@ -19,7 +18,6 @@ export type PortfolioItem = {
   slug: { current: string } | null
   tags: string[] | null
   image: { asset: { _ref: string } } | null
-  externalImageUrl: string | null
   link: string | null
   order: number | null
 }

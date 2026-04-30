@@ -4,31 +4,27 @@ import { client } from "@/sanity/lib/client";
 import { urlFor } from "@/sanity/lib/image";
 import { portfolioQuery, type PortfolioItem } from "@/sanity/lib/queries";
 
-const HERO_IMAGE =
-  "https://www.figma.com/api/mcp/asset/a38d0ce5-78f9-473a-b9f7-f4b2bfc82223";
+const HERO_IMAGE = "/hero2.jpg";
 
-const ABOUT_IMAGE =
-  "https://www.figma.com/api/mcp/asset/fc0580db-499d-4712-989b-3bd4bce96b2b";
+const ABOUT_IMAGE = "/about.png";
 
-const FULLBLEED_IMAGE =
-  "https://www.figma.com/api/mcp/asset/aa99f4a9-4c02-4ec0-8542-a2962fa1776c";
+const FULLBLEED_IMAGE = "/fullbleed.png";
 
 const SERVICES = [
-  { num: "[ 1 ]", title: "Brand Discovery",  img: "https://www.figma.com/api/mcp/asset/ca415b1a-a6c0-4c69-89cb-a60c7aa4cef5" },
-  { num: "[ 2 ]", title: "Web Design & Dev", img: "https://www.figma.com/api/mcp/asset/cca7a4ab-787d-4468-9c82-cc639e7ae604" },
-  { num: "[ 3 ]", title: "Marketing",        img: "https://www.figma.com/api/mcp/asset/a6318c13-416f-4efb-88bf-20098aad32ac" },
-  { num: "[ 4 ]", title: "Photography",      img: "https://www.figma.com/api/mcp/asset/aa417492-69cd-4e86-a1b0-c3c1f5843d23" },
-] as const;
+  { num: "[ 1 ]", title: "Brand Discovery",  img: "/service-brand.png",       objectPosition: "object-center" },
+  { num: "[ 2 ]", title: "Web Design & Dev", img: "/service-web.png",         objectPosition: "object-center" },
+  { num: "[ 3 ]", title: "Marketing",        img: "/service-marketing.png",   objectPosition: "object-center" },
+  { num: "[ 4 ]", title: "Photography",      img: "/service-photography.png", objectPosition: "object-bottom" },
+];
 
 const NEWS_ITEMS = [
-  { img: "https://www.figma.com/api/mcp/asset/8be4e21f-629a-4cd3-8640-bdf02175314f", text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua." },
-  { img: "https://www.figma.com/api/mcp/asset/e767195b-0d01-4c0f-a5e5-b2d6630eda58", text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua." },
-  { img: "https://www.figma.com/api/mcp/asset/9c2a05a4-28df-4e9d-84fa-a49a3f86a291", text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua." },
+  { img: "/news-1.png", text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua." },
+  { img: "/news-2.png", text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua." },
+  { img: "/news-3.png", text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua." },
 ];
 
 function resolveImage(item: PortfolioItem): string {
-  if (item.image?.asset) return urlFor(item.image).url();
-  return item.externalImageUrl ?? "";
+  return item.image?.asset ? urlFor(item.image).url() : "";
 }
 
 // Heights for the staggered desktop 2-col grid: outer index maps to position
@@ -322,7 +318,7 @@ export default async function Home() {
                     Placeholder description of this service. Explain the value you provide and the outcomes clients can expect. Keep it to two or three sentences.
                   </p>
                   <div className="w-[151px] h-[151px] shrink-0 overflow-hidden min-[900px]:ml-auto">
-                    <img src={s.img} alt={s.title} className="w-full h-full object-cover" />
+                    <img src={s.img} alt={s.title} className={`w-full h-full object-cover ${s.objectPosition}`} />
                   </div>
                 </div>
               </div>

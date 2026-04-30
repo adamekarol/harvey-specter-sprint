@@ -34,12 +34,6 @@ export const portfolio = defineType({
       options: { hotspot: true },
     }),
     defineField({
-      name: 'externalImageUrl',
-      title: 'External Image URL',
-      description: 'Fallback image URL if no Sanity image is uploaded',
-      type: 'url',
-    }),
-    defineField({
       name: 'link',
       title: 'Project Link',
       type: 'url',
