@@ -91,7 +91,7 @@ export function NewsSection() {
           {NEWS_ITEMS.map((n) => (
             <SwiperSlide key={n.img} style={{ width: "80%", maxWidth: "350px" }}>
               <div className="flex flex-col gap-4">
-                <div className="overflow-hidden" style={{ aspectRatio: "4/3", minHeight: "400px" }}>
+                <div className="overflow-hidden" style={{ aspectRatio: "3/4" }}>
                   <img src={n.img} alt="" className="w-full h-full object-cover" />
                 </div>
                 <p className="text-[#1f1f1f] text-[14px] leading-[1.3] tracking-[-0.56px]">{n.text}</p>
