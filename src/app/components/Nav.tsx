@@ -25,8 +25,6 @@ export function Nav() {
   const desktopLinkRefs = useRef<(HTMLAnchorElement | null)[]>([]);
   const desktopUnderlineRefs = useRef<(HTMLSpanElement | null)[]>([]);
 
-  const navRef = useRef<HTMLElement>(null);
-
   const line1Ref = useRef<SVGRectElement>(null);
   const line2Ref = useRef<SVGRectElement>(null);
   const line3Ref = useRef<SVGRectElement>(null);
@@ -63,31 +61,6 @@ export function Nav() {
       onEnter: () => gsap.to(navBgRef.current, { opacity: 1, duration: 0.4, ease: "power2.out" }),
       onLeaveBack: () => gsap.to(navBgRef.current, { opacity: 0, duration: 0.4, ease: "power2.out" }),
     });
-  }, []);
-
-  // Hide nav on scroll down, reveal on scroll up
-  useEffect(() => {
-    let lastY = window.scrollY;
-    let hidden = false;
-
-    const onScroll = () => {
-      if (menuOpenRef.current) return;
-      const y = window.scrollY;
-      const goingDown = y > lastY;
-
-      if (goingDown && !hidden && y > 80) {
-        hidden = true;
-        gsap.to(navRef.current, { opacity: 0, duration: 0.3, ease: "power2.out" });
-      } else if (!goingDown && hidden) {
-        hidden = false;
-        gsap.to(navRef.current, { opacity: 1, duration: 0.3, ease: "power2.out" });
-      }
-
-      lastY = y;
-    };
-
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   // Dark-section theme detection via scroll listener
@@ -131,7 +104,6 @@ export function Nav() {
     if (menuOpen) {
       menuOpenRef.current = true;
 
-      gsap.to(navRef.current, { opacity: 1, duration: 0.2 });
       gsap.to(navBgRef.current, { opacity: 0, duration: 0.15 });
 
       gsap.to([line1Ref.current, line2Ref.current, line3Ref.current], { fill: "#fff", duration: 0.15 });
@@ -179,7 +151,7 @@ export function Nav() {
 
   return (
     <>
-      <nav ref={navRef} className="fixed top-0 inset-x-0 z-50 px-4 min-[900px]:px-8">
+      <nav className="fixed top-0 inset-x-0 z-50 px-4 min-[900px]:px-8">
         <div
           ref={navBgRef}
           className="absolute inset-0 bg-white/10 backdrop-blur-2xl"
