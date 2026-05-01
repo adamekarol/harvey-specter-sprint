@@ -2,15 +2,10 @@
 
 import { useRef } from "react";
 import gsap from "gsap";
+import { urlFor } from "@/sanity/lib/image";
+import { type Service } from "@/sanity/lib/queries";
 
-type Props = {
-  num: string;
-  title: string;
-  img: string;
-  objectPosition: string;
-};
-
-export function ServiceItem({ num, title, img, objectPosition }: Props) {
+export function ServiceItem({ item }: { item: Service }) {
   const titleRef = useRef<HTMLParagraphElement>(null);
   const lineRef = useRef<HTMLSpanElement>(null);
 
@@ -27,6 +22,10 @@ export function ServiceItem({ num, title, img, objectPosition }: Props) {
     gsap.set(lineRef.current, { transformOrigin: "right" });
     gsap.to(lineRef.current, { scaleX: 0, duration: 0.6, ease: "power2.in" });
   };
+
+  const imgSrc = item.image?.asset ? urlFor(item.image).url() : "";
+  const imgPos = item.imagePosition ?? "object-center";
+  const num = `[ ${item.order} ]`;
 
   return (
     <div
@@ -50,18 +49,20 @@ export function ServiceItem({ num, title, img, objectPosition }: Props) {
           ref={titleRef}
           className="font-bold italic text-white uppercase leading-[1.1] tracking-[-0.04em] text-[28px] min-[900px]:text-[36px] min-[900px]:min-w-[320px]"
         >
-          {title}
+          {item.title}
         </p>
         <div className="flex flex-row flex-wrap justify-between gap-6 items-start">
           <p className="text-white text-[14px] leading-[1.3] tracking-[-0.04em] min-[900px]:flex-1 max-w-[400px]">
-            Placeholder description of this service. Explain the value you provide and the outcomes clients can expect. Keep it to two or three sentences.
+            {item.description}
           </p>
           <div className="w-[151px] h-[151px] shrink-0 overflow-hidden min-[900px]:ml-auto">
-            <img
-              src={img}
-              alt={title}
-              className={`w-full h-full object-cover ${objectPosition}`}
-            />
+            {imgSrc && (
+              <img
+                src={imgSrc}
+                alt={item.title}
+                className={`w-full h-full object-cover ${imgPos}`}
+              />
+            )}
           </div>
         </div>
       </div>

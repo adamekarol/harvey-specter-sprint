@@ -21,3 +21,27 @@ export type PortfolioItem = {
   link: string | null
   order: number | null
 }
+
+export const servicesQuery = defineQuery(`
+  *[_type == "service"] | order(order asc) {
+    _id,
+    title,
+    slug,
+    order,
+    description,
+    deliverables,
+    image,
+    imagePosition
+  }
+`)
+
+export type Service = {
+  _id: string
+  title: string
+  slug: { current: string } | null
+  order: number
+  description: string
+  deliverables: string[] | null
+  image: { asset: { _ref: string } } | null
+  imagePosition: string | null
+}

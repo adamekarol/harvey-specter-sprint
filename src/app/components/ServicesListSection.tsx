@@ -3,19 +3,12 @@
 import { useRef, useEffect } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { urlFor } from "@/sanity/lib/image";
+import { type Service } from "@/sanity/lib/queries";
 
 gsap.registerPlugin(ScrollTrigger);
 
-type Service = {
-  num: string;
-  title: string;
-  img: string;
-  objectPosition: string;
-  description: string;
-  deliverables: string[];
-};
-
-function ServiceDetailItem({ service }: { service: Service }) {
+function ServiceDetailItem({ item }: { item: Service }) {
   const itemRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
   const overlayMobileRef = useRef<HTMLDivElement>(null);
@@ -60,6 +53,10 @@ function ServiceDetailItem({ service }: { service: Service }) {
     return () => ctx.revert();
   }, []);
 
+  const imgSrc = item.image?.asset ? urlFor(item.image).url() : "";
+  const imgPos = item.imagePosition ?? "object-center";
+  const num = `[ ${String(item.order).padStart(2, "0")} ]`;
+
   return (
     <div ref={itemRef} className="flex flex-col gap-4 min-[900px]:gap-6">
       {/* Label + divider */}
@@ -68,7 +65,7 @@ function ServiceDetailItem({ service }: { service: Service }) {
           className="text-[#1f1f1f] text-[13px] uppercase leading-[1.1]"
           style={{ fontFamily: "monospace" }}
         >
-          {service.num}
+          {num}
         </p>
         <div className="w-full h-px bg-[#1f1f1f]/20" />
       </div>
@@ -79,42 +76,46 @@ function ServiceDetailItem({ service }: { service: Service }) {
         className="font-bold italic text-[#1f1f1f] uppercase leading-[0.95] tracking-[-0.04em] text-[11vw] min-[900px]:text-[5.5vw]"
         style={{ opacity: 0 }}
       >
-        {service.title}
+        {item.title}
       </h2>
 
-      {/* Mobile image (between title and body) */}
+      {/* Mobile image */}
       <div
         className="min-[900px]:hidden relative overflow-hidden w-full"
         style={{ aspectRatio: "4/3" }}
         onMouseEnter={() => gsap.to(imgMobileRef.current, { scale: 1.04, duration: 0.6, ease: "power2.out" })}
         onMouseLeave={() => gsap.to(imgMobileRef.current, { scale: 1, duration: 0.55, ease: "power2.inOut" })}
       >
-        <img
-          ref={imgMobileRef}
-          src={service.img}
-          alt={service.title}
-          className={`w-full h-full object-cover ${service.objectPosition}`}
-        />
+        {imgSrc && (
+          <img
+            ref={imgMobileRef}
+            src={imgSrc}
+            alt={item.title}
+            className={`w-full h-full object-cover ${imgPos}`}
+          />
+        )}
         <div ref={overlayMobileRef} className="absolute inset-0 bg-black" />
       </div>
 
-      {/* Body: description + tags (mobile), plus desktop image */}
+      {/* Body: description + tags, plus desktop image */}
       <div className="flex flex-col gap-5 min-[900px]:flex-row min-[900px]:gap-12 min-[900px]:items-start">
         <div ref={bodyRef} className="flex flex-col gap-5 min-[900px]:flex-1" style={{ opacity: 0 }}>
           <p className="text-[14px] leading-[1.4] tracking-[-0.04em] text-[#1f1f1f] max-w-[480px]">
-            {service.description}
+            {item.description}
           </p>
-          <div className="flex flex-wrap gap-2">
-            {service.deliverables.map((d) => (
-              <span
-                key={d}
-                className="border border-[#1f1f1f]/30 text-[#1f1f1f] text-[12px] uppercase tracking-[0.02em] px-3 py-1.5 rounded-full"
-                style={{ fontFamily: "monospace" }}
-              >
-                {d}
-              </span>
-            ))}
-          </div>
+          {(item.deliverables ?? []).length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              {(item.deliverables ?? []).map((d) => (
+                <span
+                  key={d}
+                  className="border border-[#1f1f1f]/30 text-[#1f1f1f] text-[12px] uppercase tracking-[0.02em] px-3 py-1.5 rounded-full"
+                  style={{ fontFamily: "monospace" }}
+                >
+                  {d}
+                </span>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Desktop image */}
@@ -124,12 +125,14 @@ function ServiceDetailItem({ service }: { service: Service }) {
           onMouseEnter={() => gsap.to(imgDesktopRef.current, { scale: 1.04, duration: 0.6, ease: "power2.out" })}
           onMouseLeave={() => gsap.to(imgDesktopRef.current, { scale: 1, duration: 0.55, ease: "power2.inOut" })}
         >
-          <img
-            ref={imgDesktopRef}
-            src={service.img}
-            alt={service.title}
-            className={`w-full h-full object-cover ${service.objectPosition}`}
-          />
+          {imgSrc && (
+            <img
+              ref={imgDesktopRef}
+              src={imgSrc}
+              alt={item.title}
+              className={`w-full h-full object-cover ${imgPos}`}
+            />
+          )}
           <div ref={overlayDesktopRef} className="absolute inset-0 bg-black" />
         </div>
       </div>
@@ -164,10 +167,9 @@ export function ServicesListSection({ services }: { services: Service[] }) {
         </div>
       </div>
 
-      {/* Service items */}
       <div className="flex flex-col gap-16 min-[900px]:gap-24">
         {services.map((s) => (
-          <ServiceDetailItem key={s.num} service={s} />
+          <ServiceDetailItem key={s._id} item={s} />
         ))}
       </div>
     </section>

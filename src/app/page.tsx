@@ -12,25 +12,17 @@ import { TestimonialsSection } from "./components/TestimonialsSection";
 import { NewsSection } from "./components/NewsSection";
 import { LetsTalkBtn } from "./components/LetsTalkBtn";
 import { client } from "@/sanity/lib/client";
-import { portfolioQuery, type PortfolioItem } from "@/sanity/lib/queries";
+import { portfolioQuery, servicesQuery, type PortfolioItem, type Service } from "@/sanity/lib/queries";
 
 const HERO_IMAGE = "/hero2.jpg";
-
 const ABOUT_IMAGE = "/about.png";
-
 const FULLBLEED_IMAGE = "/fullbleed.png";
 
-
-const SERVICES = [
-  { num: "[ 1 ]", title: "Brand Discovery",  img: "/service-brand.png",       objectPosition: "object-center" },
-  { num: "[ 2 ]", title: "Web Design & Dev", img: "/service-web.png",         objectPosition: "object-center" },
-  { num: "[ 3 ]", title: "Marketing",        img: "/service-marketing.png",   objectPosition: "object-center" },
-  { num: "[ 4 ]", title: "Photography",      img: "/service-photography.png", objectPosition: "object-bottom" },
-];
-
-
 export default async function Home() {
-  const portfolioItems: PortfolioItem[] = await client.fetch(portfolioQuery, {}, { next: { revalidate: 60 } });
+  const [portfolioItems, services] = await Promise.all([
+    client.fetch<PortfolioItem[]>(portfolioQuery, {}, { next: { revalidate: 60 } }),
+    client.fetch<Service[]>(servicesQuery, {}, { next: { revalidate: 60 } }),
+  ]);
 
   return (
     <>
@@ -97,7 +89,7 @@ export default async function Home() {
 
         <div className="flex items-center justify-between w-full uppercase whitespace-nowrap">
           <span className="font-light text-white leading-none" style={{ fontSize: "8.5vw", letterSpacing: "-0.08em", lineHeight: 1 }}>
-            [4]
+            [{services.length}]
           </span>
           <span className="font-light text-white leading-none min-[900px]:text-[96px]" style={{ fontSize: "8.5vw", letterSpacing: "-0.08em", lineHeight: 1 }}>
             Deliverables
@@ -105,14 +97,8 @@ export default async function Home() {
         </div>
 
         <div className="flex flex-col gap-12">
-          {SERVICES.map((s) => (
-            <ServiceItem
-              key={s.title}
-              num={s.num}
-              title={s.title}
-              img={s.img}
-              objectPosition={s.objectPosition}
-            />
+          {services.map((s) => (
+            <ServiceItem key={s._id} item={s} />
           ))}
         </div>
       </section>
