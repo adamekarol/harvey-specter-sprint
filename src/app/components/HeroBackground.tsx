@@ -20,6 +20,7 @@ export function HeroBackground({ src }: { src: string }) {
         {
           scale: 1.15,
           ease: "none",
+          force3D: true,
           scrollTrigger: {
             trigger: section,
             start: "top top",
@@ -39,7 +40,7 @@ export function HeroBackground({ src }: { src: string }) {
       src={src}
       alt=""
       className="absolute inset-0 w-full h-full object-cover object-[center_20%]"
-      style={{ transform: 'scale(1) translateZ(0)' }}
+      style={{ willChange: 'transform' }}
     />
   );
 }
