@@ -39,6 +39,7 @@ export function HeroBackground({ src }: { src: string }) {
       src={src}
       alt=""
       className="absolute inset-0 w-full h-full object-cover object-[center_20%]"
+      style={{ transform: 'scale(1) translateZ(0)' }}
     />
   );
 }

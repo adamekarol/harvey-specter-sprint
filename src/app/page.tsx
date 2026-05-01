@@ -36,7 +36,7 @@ export default async function Home() {
     <>
     <main className="relative z-10">
       <Nav />
-      <section className="relative min-h-dvh overflow-hidden bg-[#c8cbd0]" data-hero-section>
+      <section className="relative min-h-dvh overflow-hidden bg-[#c8cbd0]" data-hero-section style={{ transform: 'translateZ(0)' }}>
         {/* Background photo */}
         <HeroBackground src={HERO_IMAGE} />
 
