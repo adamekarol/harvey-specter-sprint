@@ -8,7 +8,13 @@ import { LetsTalkBtn } from "./LetsTalkBtn";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const NAV_LINKS = ["About", "Services", "Projects", "News", "Contact"];
+const NAV_LINKS = [
+  { label: "About",    href: "/about" },
+  { label: "Services", href: "/services" },
+  { label: "Projects", href: "#" },
+  { label: "News",     href: "#" },
+  { label: "Contact",  href: "#" },
+];
 
 export function Nav() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -168,11 +174,11 @@ export function Nav() {
           </Link>
 
           <div className="hidden min-[900px]:flex gap-14 text-base font-semibold tracking-[-0.04em] capitalize">
-            {NAV_LINKS.map((link, i) => (
+            {NAV_LINKS.map(({ label, href }, i) => (
               <a
-                key={link}
+                key={label}
                 ref={(el) => { desktopLinkRefs.current[i] = el; }}
-                href="#"
+                href={href}
                 className="relative pb-px"
                 style={{ color: "#000000" }}
                 onMouseEnter={() => {
@@ -186,7 +192,7 @@ export function Nav() {
                   gsap.to(desktopUnderlineRefs.current[i], { scaleX: 0, duration: 0.25, ease: "power2.in" });
                 }}
               >
-                {link}
+                {label}
                 <span
                   ref={(el) => { desktopUnderlineRefs.current[i] = el; }}
                   className="absolute bottom-0 left-0 w-full h-px bg-current"
@@ -220,14 +226,14 @@ export function Nav() {
         className="min-[900px]:hidden fixed inset-0 bg-black/85 backdrop-blur-md z-40 flex-col justify-center px-8 gap-4"
         style={{ display: "none", opacity: 0 }}
       >
-        {NAV_LINKS.map((link, i) => (
+        {NAV_LINKS.map(({ label, href }, i) => (
           <a
-            key={link}
-            href="#"
+            key={label}
+            href={href}
             ref={(el) => { mobileLinkRefs.current[i] = el; }}
             className="text-[clamp(36px,10vw,56px)] font-light uppercase text-white tracking-[-0.04em] leading-tight"
           >
-            {link}
+            {label}
           </a>
         ))}
         <LetsTalkBtn className="self-start mt-6 text-white text-sm font-medium px-4 py-3 rounded-full border border-white" />
