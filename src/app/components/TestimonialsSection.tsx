@@ -12,7 +12,7 @@ gsap.registerPlugin(Draggable);
 
 const TESTIMONIALS = [
   {
-    logo: "https://www.figma.com/api/mcp/asset/cd9fc73e-b761-430b-a053-0da1aa830a49",
+    logo: "/marko-logo.png",
     quote: "A brilliant creative partner who transformed our vision into a unique, high-impact brand identity. Their ability to craft everything from custom mascots to polished logos is truly impressive.",
     name: "Marko Stojković",
     logoW: 143, logoH: 19,
@@ -21,7 +21,7 @@ const TESTIMONIALS = [
     desktopZ: 15,
   },
   {
-    logo: "https://www.figma.com/api/mcp/asset/2b4aac27-4629-413a-9f79-d22ca0f2d21b",
+    logo: "/lukas-logo.png",
     quote: "Professional, precise, and incredibly fast at handling complex product visualizations and templates.",
     name: "Lukas Weber",
     logoW: 138, logoH: 19,
@@ -30,7 +30,7 @@ const TESTIMONIALS = [
     desktopZ: 0,
   },
   {
-    logo: "https://www.figma.com/api/mcp/asset/28dd5f44-aa4b-4544-81fc-13751743e40e",
+    logo: "/sarah-logo.png",
     quote: "A strategic partner who balances stunning aesthetics with high-performance UX for complex platforms. They don't just make things look good; they solve business problems through visual clarity.",
     name: "Sarah Jenkins",
     logoW: 109, logoH: 31,
@@ -39,7 +39,7 @@ const TESTIMONIALS = [
     desktopZ: 0,
   },
   {
-    logo: "https://www.figma.com/api/mcp/asset/510bf496-b278-48bd-af59-5b7a559650d7",
+    logo: "/sofia-logo.png",
     quote: "An incredibly versatile designer who delivers consistent quality across a wide range of styles and formats.",
     name: "Sofia Martínez",
     logoW: 81, logoH: 36,
